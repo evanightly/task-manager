@@ -9,14 +9,14 @@ block content
                     .form-group
                         label(for="newTask") 
                             h5.fw-light Create new task
-                        input.form-control.border-white#newTask(type="text", name="task")
+                        input.form-control.border-white#newTask(type="text", name="task", autofocus)
                 .d-flex.flex-column
                     form(action="/task/delete", method="post") 
                         each task in tasks
                             label.d-flex.col.bg-light.text-dark.p-2.rounded.mt-2(for=task)
                                 input.form-check-input.bg-info.border-0.shadow-none.me-3(id=task, type="checkbox", name="tasks", value=task)
                                 p.m-0=task
-                        button.btn.btn-primary.btn-block.mt-2 Delete Checked List
+                        button.btn.btn-primary.btn-sm.px-2.py-1.btn-block.mt-2 Delete Checked List
             .col-5.pt-2
                 .container
                     .row.justify-content-between.align-items-center
@@ -32,47 +32,53 @@ block content
                                             button.btn-close(data-bs-dismiss="modal")
                                         .modal-body 
                                             form(action="/call", method="post") 
+                                                input(type="hidden", name="id", value=callsTotal+1)
                                                 .form-group
                                                     label.form-label(for="name") Contact Name
-                                                    input#name.form-control(type="text", name="text")
+                                                    input#name.form-control(type="text", name="name", required)
                                                 .form-group.mt-2 
                                                     label.form-label(for="company") Company
-                                                    input#company.form-control(type="text", name="text")
+                                                    input#company.form-control(type="text", name="company", required)
                                                 .form-group.mt-2 
                                                     label.form-label(for="number") Contact Number
-                                                    input#number.form-control(type="number", name="number")
+                                                    input#number.form-control(type="number", name="contact_number", required)
                                                 .form-group.mt-2 
                                                     label.form-label(for="desc") About
-                                                    textarea#desc.form-control(name="desc")
+                                                    textarea#desc.form-control(name="desc", required)
                                                 .form-group.mt-2 
                                                     label.form-label(for="day") Day
-                                                    input#day.form-control(type="date", name="date")
+                                                    input#day.form-control(type="date", name="date", required)
                                                 .form-group.mt-2 
                                                     label.form-label(for="time") Time
-                                                    input#time.form-control(type="time", name="time")
+                                                    input#time.form-control(type="time", name="time", required)
                                                 .form-group.mt-2 
-                                                    input.btn.btn-success(type="submit", value="Add Call")
+                                                    input.btn.btn-success(type="submit", value="Add Call", required)
                 .container
                     .row.flex-column.gap-2.mt-2
-                        .col.rounded.bg-white.text-dark.p-3.pb-2
-                            .col-12.d-flex.align-items.center.align-items.center
-                                .col-4 
-                                    img.user-image.img-fluid.mx-auto(src="https://picsum.photos/200/300?random=2", alt="Michael")
-                                .col-12.d-flex.flex-column 
-                                    .col
-                                        p.m-0.fw-bold Michael
-                                        p.m-0 Aleieance Company
-                                    .col.flex-column 
-                                        p.m-0 123-412-1203
-                                        p.m-0.text-primary Contact
-                            .col-12.d-flex.flex-column
-                                .col-12.mt-2
-                                    p Interview preparation
-                            .col-12.d-flex.justify-content-between.align-items-center.border-top.border-1.border-light.pt-2
-                                .col-6 Monday at 10PM
-                                .col-6.text-end
-                                    btn.btn.btn-sm.btn-transparent.text-primary.py-1.px-2.m-0 Call now
-                                    
-            
-
-                    
+                        each call in calls
+                            .col.rounded.bg-white.text-dark.p-3.pb-2
+                                .col-12.d-flex.align-items.center.align-items.center
+                                    .col-4 
+                                        img.user-image.img-fluid.mx-auto(src=`https://picsum.photos/id/${call.id}/200/300`, alt="Michael")
+                                    .col-12.d-flex.flex-column 
+                                        .col
+                                            p.m-0.fw-bold=call.name
+                                            p.m-0=call.company
+                                        .col.flex-column 
+                                            p.m-0=call.contact_number
+                                            btn.btn.btn-sm.btn-transparent.text-primary.p-0.border-0 Call now
+                                .col-12.d-flex.flex-column
+                                    .col-12.mt-2
+                                        p=call.desc
+                                .col-12.d-flex.justify-content-between.align-items-center.border-top.border-1.border-light.pt-2
+                                    .col-6
+                                        span 
+                                            =call.date 
+                                        span.mx-1 at
+                                        span.text-danger
+                                            =call.time
+                                    .col-6.text-end
+                                        form(action="call/delete/" method="POST") 
+                                            input(type="hidden", name="id" value=call.id)
+                                            input(type="hidden", name="contact_number" value=call.contact_number)
+                                            input.btn.btn-sm.btn-transparent.text-primary.py-1.px-2.m-0(type="submit", value="Dismiss") 

@@ -28,8 +28,24 @@ for (const route of routes) {
 
 app.get('/', async (req, res) => {
     const tasks = await redisClient.lRange('tasks', 0, -1)
-    await res.render('index', { tasks })
+    const callsTotal = await redisClient.lRange('callsTotal', 0, -1)
+    const calls = []
+    if (callsTotal.length > 0) {
+        for (const call of callsTotal) {
+            const singleCall = await redisClient.hGetAll(`call:${call}`)
+            calls.push({ id: call, ...singleCall })
+        }
+    }
+    const k = await redisClient.keys('*')
+    console.log(calls)
+    await res.render('index', { tasks, callsTotal, calls })
 })
+
+app.get('/flush', async (req, res) => {
+    await redisClient.flushAll()
+    res.send('Cleared')
+})
+
 app.get('*', (req, res) => res.send('You have reached the dark zone'))
 
 app.listen(port, () => console.log(`Server connected on port ${port}`))
